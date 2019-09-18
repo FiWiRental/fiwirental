@@ -4,41 +4,49 @@ from mongoengine import Document, EmbeddedDocument
 from mongoengine.fields import (
     DateTimeField, ReferenceField, StringField, ObjectIdField
     , FileField, DateField, DecimalField, IntField, ListField, 
-    EmailField, LazyReferenceField, ImageField, EmbeddedDocumentListField
+    EmailField, LazyReferenceField, ImageField, EmbeddedDocumentListField,
+    EmbeddedDocumentField
 )
 
 
-class uploadedImages(EmbeddedDocument):
-    meta={'collection':'images'}
-    photos = ImageField(thumbnail_size=(150, 150, True))
+class UploadedImages(EmbeddedDocument):
+    meta = {'collection': 'images'}
+    photos = StringField(required=True)
+
+
+class BaseAddress(EmbeddedDocument):
+    meta = {'collection': 'addresses'}
+    lot_num = IntField(required=True)
+    Street_name = StringField(required=True)
+    Community = StringField()
+    City = StringField(required=True)
+    Parish = StringField(required=True)
 
 
 class Vehicle(Document):
-    meta={'collection':'vehicle'}
-    vehicle_id = ObjectIdField(primary_key=True,required=True, default=ObjectId)
-    photos = EmbeddedDocumentListField(uploadedImages)
+    meta = {'collection': 'vehicle'}
+    chassis_num = StringField(primary_key=True,required=True, unique=True)
+    photos = EmbeddedDocumentListField(UploadedImages)
     model = StringField()
     make = StringField()
     year = DateField()
-    owner_id = ObjectIdField()
+    owner_id = StringField()
     transmission_type = StringField()
     Description = StringField()
     Price = DecimalField(required=True)   
 
+
 class Person(Document):
-    meta={'collection':'person'}
-    pid = ObjectIdField(primary_key=True,required=True, default=ObjectId)
-    photo_id = FileField(collection_name='images')
+    meta = {'collection': 'person'}
+    uuid = StringField(primary_key=True, required=True) 
+    idType = StringField(required=True)
+    photo_id = StringField(required=True)
     name = StringField()
     age = IntField()
     dob = DateField()
     member_since = DateTimeField(default=datetime.now) 
     Description = StringField()
-    lot_num = IntField(required=True)
-    Street_name = StringField(required=True)
-    Community = StringField()
-    City =  StringField(required=True)
-    Parish =  StringField(required=True)
+    address = EmbeddedDocumentField(BaseAddress)
     email_address = ListField(EmailField())
     phone_number = ListField(StringField())
     Language = ListField(StringField())
@@ -46,19 +54,15 @@ class Person(Document):
     Rating = DecimalField()
     # vehicles_owned = ListField(LazyReferenceField(Vehicle), default=list)
 
+
 class Rental(Document):
-    meta={'collection':'rental'}
+    meta = {'collection': 'rental'}
     rental_id = ObjectIdField(Primary_key=True,required=True, default=ObjectId)
     start_date = DateField(required=True)
     end_date = DateField(required=True)
-    # owner_id = LazyReferenceField(Person,required=True)
     renter_id = LazyReferenceField(Person,required=True)
     vehicle_id = LazyReferenceField(Vehicle,required=True)
-    lot_num = IntField(required=True)
-    Street_name = StringField(required=True)
-    Community = StringField(required=True)
-    City = StringField(required=True)
-    Parish = StringField(required=True)
+    address = EmbeddedDocumentField(BaseAddress)
     location_type = StringField(required=True)
     pickup_time = DateTimeField()
     dropoff_time = DateTimeField()
