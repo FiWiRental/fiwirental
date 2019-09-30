@@ -2,8 +2,7 @@ from datetime import datetime
 from bson.objectid import ObjectId
 from mongoengine import Document, EmbeddedDocument
 from mongoengine.fields import (
-    DateTimeField, StringField, ObjectIdField
-, DateField, DecimalField, IntField, ListField,
+    DateTimeField, StringField, ObjectIdField, DateField, DecimalField, IntField, ListField,
     EmailField, LazyReferenceField, EmbeddedDocumentListField,
     EmbeddedDocumentField
 )
@@ -17,10 +16,10 @@ class UploadedImages(EmbeddedDocument):
 class BaseAddress(EmbeddedDocument):
     meta = {'collection': 'addresses'}
     lot_num = IntField(required=True)
-    Street_name = StringField(required=True)
+    street_name = StringField(required=True)
     community = StringField()
-    City = StringField(required=True)
-    Parish = StringField(required=True)
+    city = StringField(required=True)
+    parish = StringField(required=True)
 
 
 class Person(Document):
@@ -44,12 +43,12 @@ class Person(Document):
 
 class Vehicle(Document):
     meta = {'collection': 'vehicle'}
-    chassis_num = StringField(primary_key=True, required=True, unique=True)
+    chassis_num = StringField(primary_key=True, required=True)
     photos = EmbeddedDocumentListField(UploadedImages)
     model = StringField()
     make = StringField()
     year = DateField()
-    owner_id = StringField(LazyReferenceField(Person))
+    owner_id = LazyReferenceField(Person)
     transmission_type = StringField()
     description = StringField()
     price = DecimalField(required=True)
@@ -57,11 +56,12 @@ class Vehicle(Document):
 
 class Rental(Document):
     meta = {'collection': 'rental'}
-    rental_id = ObjectIdField(Primary_key=True,required=True, default=ObjectId)
+    rental_id = ObjectIdField(Primary_key=True, required=True, default=ObjectId)
     start_date = DateField(required=True)
     end_date = DateField(required=True)
-    renter_id = LazyReferenceField(Person,required=True)
-    vehicle_id = LazyReferenceField(Vehicle,required=True)
+    renter_id = LazyReferenceField(Person, required=True)
+    vehicle_id = LazyReferenceField(Vehicle, required=True)
+    # rentee_id = LazyReferenceField()Person, required=True)
     address = EmbeddedDocumentField(BaseAddress)
     location_type = StringField(required=True)
     pickup_time = DateTimeField()

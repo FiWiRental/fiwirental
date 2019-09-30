@@ -5,31 +5,41 @@ import os
 
 from mongoengine import connect
 
-from models import Vehicle, Person, UploadedImages
+from Models.models import Vehicle, Person, UploadedImages, BaseAddress
 
 
 connect(os.getenv("MONGODB_DATABASE"), host=os.getenv("MONGODB_CONNECTION_STRING"), alias='default')
 
+
 def init_db():
 
     # Create the fixtures
-    with open('test-images/man.png','rb') as customer_image:
-        me = Person(uuid="123-456-789",name='Daniel Jackson',age=20,dob='10/10/1999',Description="An Anime lover and local weeboo specialist",
-        email_address=["dkjackson@gmail.com"],Language=["English"], lot_num=80,Street_name="Brooklyn Ave",
-        City="Spanish Town",Parish="St. Catherine")
-        me.photo_id.replace(customer_image, filename="man-img.png", content_type='image/jpg')
-        me.save()
+    addr = BaseAddress(lot_num=80, street_name="Brooklyn Ave", community="Greendale", city="Spanish Town",
+                       parish="St.Catherine")
+    person_pics = UploadedImages(photo_url='www.amazons3.com/upload-test/test-image.jpg')
+    me = Person()
+    me.uuid = "123-456-789"
+    me.idType = "TRN"
+    me.photo_id = person_pics
+    me.name = 'Danielle Jackson'
+    me.age = 20
+    me.dob = '10/10/1999'
+    me.description = "An Anime lover and local weeboo specialist"
+    me.email_address = ["dkjackson@gmail.com"]
+    me.language = ["English"]
+    me.address = addr
+    # me.photo_id.replace(customer_image, filename="man-img.png", content_type='image/jpg')
+    me.save()
 
-    vehicle_img_1 = UploadedImages()
-    with open('test-images/mazda-1.jpg','rb') as vehicle_image:
-        vehicle_img_1.photos.replace(vehicle_image, filename="mazda.jpg", content_type='image/jpg')
-
-    vehicle_img_2 = UploadedImages()
-    with open('test-images/mazda-2.jpg','rb') as vehicle_image:
-        vehicle_img_2.photos.replace(vehicle_image, filename="mazda-second.jpg", content_type='image/jpg')
-
-    mazda = Vehicle(model="RX7",owner_id=me.uuid, make="Mazda",year="01/01/1994",
-     transmission_type="Manual", Description="Intial-D anyone?",Price=1011.98)
-    mazda.photos.append(vehicle_img_1)
-    mazda.photos.append(vehicle_img_2)
+    vehicle_pics = UploadedImages(photo_url="www.amazons3.com/upload-test/test-image.jpg")
+    mazda = Vehicle()
+    mazda.chassis_num = "1233456677"
+    mazda.photos = [vehicle_pics]
+    mazda.model = "RX7"
+    mazda.owner_id = me.uuid
+    mazda.make = "Mazda"
+    mazda.year = "01/01/1994"
+    mazda.transmission_type = "Manual"
+    mazda.description = "Initial-D anyone?"
+    mazda.price = 1011.98
     mazda.save()
