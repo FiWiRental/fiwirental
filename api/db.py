@@ -24,7 +24,7 @@ def init_db():
     me.name = 'Danielle Jackson'
     me.age = 20
     me.dob = '10/10/1999'
-    me.description = "An Anime lover and local weeboo specialist"
+    me.description = "An Anime lover and local weeaboo specialist"
     me.email_address = ["dkjackson@gmail.com"]
     me.language = ["English"]
     me.address = addr

@@ -4,9 +4,9 @@ from graphene_mongo import MongoengineConnectionField, MongoengineObjectType
 from Models.models import Vehicle as VehicleModel
 from Models.models import Person as PersonModel
 from Models.models import Rental as RentalModel
-from Rentals.schema import CreateRental as newRental
-from Customers.schema import CreateCustomer as newCustomer
-from Vehicles.schema import CreateVehicleEntry as newVehicle
+from Rentals.schema import CreateRental
+from Customers.schema import CreateCustomer
+from Vehicles.schema import CreateVehicleEntry
 
 
 class Vehicle(MongoengineObjectType):
@@ -31,9 +31,9 @@ class Rental(MongoengineObjectType):
 
 
 class MyMutations(graphene.ObjectType):
-    create_person = newCustomer.Field()
-    create_vehicle = newVehicle.Field()
-    create_rental = newRental.Field()
+    create_customer = CreateCustomer.Field()
+    create_vehicle_entry = CreateVehicleEntry.Field()
+    create_rental = CreateRental.Field()
 
 
 class Query(graphene.ObjectType):
@@ -41,6 +41,8 @@ class Query(graphene.ObjectType):
     all_customers = MongoengineConnectionField(Person)
     all_rentals = MongoengineConnectionField(Rental)
     all_vehicles = MongoengineConnectionField(Vehicle)
+    person = graphene.Field(Person)
+    rental = graphene.Field(Rental)
     Vehicles = graphene.Field(Vehicle)
 
 

@@ -5,26 +5,27 @@ from Models.models import Vehicle, UploadedImages
 
 class CreateVehicleEntry(graphene.Mutation):
     chassis_num = graphene.String()
-    photos = graphene.String()
+    photos = graphene.List(graphene.String)
     model = graphene.String()
     make = graphene.String()
     year = graphene.Date()
     owner_id = graphene.String()
     transmission_type = graphene.String()
     description = graphene.String()
-    price = graphene.Decimal()
+    price = graphene.Float()
 
     class Arguments:
         chassis_num = graphene.String()
-        photos = graphene.String()
+        photos = graphene.List(graphene.String)
         model = graphene.String()
         make = graphene.String()
         year = graphene.Date()
         owner_id = graphene.String()
         transmission_type = graphene.String()
         description = graphene.String()
-        price = graphene.Decimal()
+        price = graphene.Float()
 
+    @staticmethod
     def mutate(self, info, chassis_num, photos, model, make, year, owner_id, transmission_type, description, price):
         vehicle_images = UploadedImages(photo_url=photos)
         vehicle = Vehicle(chassis_num=chassis_num, model=model, make=make, year=year, owner_id=owner_id,

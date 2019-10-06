@@ -30,6 +30,7 @@ class CreateRental(graphene.Mutation):
         pickup_time = graphene.DateTime()
         dropoff_time = graphene.DateTime()
 
+    @staticmethod
     def mutate(self, info, start_date, end_date, renter_id, vehicle_id, lot_num, street_name, community, city, parish,
                location_type, pickup_time
                , dropoff_time):
@@ -45,7 +46,11 @@ class CreateRental(graphene.Mutation):
             end_date=rental.end_date,
             renter_id=rental.renter_id,
             vehicle_id=rental.vehicle_id,
-            address=rental.address,
+            lot_num=rental.address.lot_num,
+            street_name=rental.address.street_name,
+            community=rental.address.community,
+            city=rental.address.city,
+            parish=rental.address.parish,
             location_type=rental.location_type,
             pickup_time=rental.pickup_time,
             dropoff_time=rental.dropoff_time
