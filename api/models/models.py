@@ -3,14 +3,13 @@ from bson.objectid import ObjectId
 from mongoengine import Document, EmbeddedDocument
 from mongoengine.fields import (
     DateTimeField, StringField, ObjectIdField, DateField, DecimalField, IntField, ListField,
-    EmailField, LazyReferenceField, EmbeddedDocumentListField,
-    EmbeddedDocumentField
+    EmailField, LazyReferenceField, EmbeddedDocumentField
 )
 
 
 class UploadedImages(EmbeddedDocument):
     meta = {'collection': 'images'}
-    photo_url = StringField(required=True)
+    photo_url = ListField(StringField(required=True))
 
 
 class BaseAddress(EmbeddedDocument):
@@ -24,8 +23,8 @@ class BaseAddress(EmbeddedDocument):
 
 class Person(Document):
     meta = {'collection': 'person'}
-    uuid = StringField(primary_key=True, required=True) 
-    idType = StringField(required=True)
+    uuid = StringField(primary_key=True, required=True)
+    idtype = StringField(required=True)
     photo_id = EmbeddedDocumentField(UploadedImages)
     name = StringField()
     age = IntField()
@@ -44,7 +43,7 @@ class Person(Document):
 class Vehicle(Document):
     meta = {'collection': 'vehicle'}
     chassis_num = StringField(primary_key=True, required=True)
-    photos = EmbeddedDocumentListField(UploadedImages)
+    photo_url = EmbeddedDocumentField(UploadedImages)
     model = StringField()
     make = StringField()
     year = DateField()
@@ -57,7 +56,7 @@ class Vehicle(Document):
 class Rental(Document):
     meta = {'collection': 'rental'}
     rental_id = ObjectIdField(Primary_key=True, required=True, default=ObjectId)
-    start_date = DateField(required=True)
+    start_date = DateField(required=True, default=datetime.utcnow)
     end_date = DateField(required=True)
     renter_id = LazyReferenceField(Person, required=True)
     vehicle_id = LazyReferenceField(Vehicle, required=True)

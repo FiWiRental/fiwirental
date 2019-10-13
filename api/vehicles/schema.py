@@ -5,7 +5,7 @@ from Models.models import Vehicle, UploadedImages
 
 class CreateVehicleEntry(graphene.Mutation):
     chassis_num = graphene.String()
-    photos = graphene.List(graphene.String)
+    photo_url = graphene.String()
     model = graphene.String()
     make = graphene.String()
     year = graphene.Date()
@@ -16,7 +16,7 @@ class CreateVehicleEntry(graphene.Mutation):
 
     class Arguments:
         chassis_num = graphene.String()
-        photos = graphene.List(graphene.String)
+        photo_url = graphene.List(graphene.String)
         model = graphene.String()
         make = graphene.String()
         year = graphene.Date()
@@ -26,15 +26,17 @@ class CreateVehicleEntry(graphene.Mutation):
         price = graphene.Float()
 
     @staticmethod
-    def mutate(self, info, chassis_num, photos, model, make, year, owner_id, transmission_type, description, price):
-        vehicle_images = UploadedImages(photo_url=photos)
+    def mutate(self, info, chassis_num, photo_url, model, make, year, owner_id, transmission_type, description, price):
+        vehicle_images = UploadedImages(photo_url=photo_url)
         vehicle = Vehicle(chassis_num=chassis_num, model=model, make=make, year=year, owner_id=owner_id,
                           transmission_type=transmission_type, description=description, price=price)
-        vehicle.photos = vehicle_images
+        vehicle.photo_url = vehicle_images
+        # print(type(vehicle_images))
+        print(vehicle_images.photo_url)
         vehicle.save()
         return CreateVehicleEntry(
             chassis_num=Vehicle.chassis_num,
-            photos=Vehicle.photos,
+            photo_url=Vehicle.photo_url,
             model=Vehicle.model,
             make=Vehicle.make,
             year=Vehicle.year,
