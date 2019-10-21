@@ -31,14 +31,22 @@ class CreateRental(graphene.Mutation):
         dropoff_time = graphene.DateTime()
 
     @staticmethod
-    def mutate(self, info, start_date, end_date, renter_id, vehicle_id, lot_num, street_name, community, city, parish,
-               location_type, pickup_time
-               , dropoff_time):
-        rental_address = BaseAddress(lot_num=lot_num, street_name=street_name, community=community,
-                                     city=city, parish=parish)
+    def mutate(self, info, start_date, end_date, renter_id, vehicle_id, lot_num, street_name, city, parish,
+               location_type, **kwargs):
+        if kwargs is not None:
+            for arg in kwargs.values():
+                rental_address = BaseAddress(lot_num=lot_num, street_name=street_name,
+                                         city=city, parish=parish, community=arg['community'])
+
+                rental = Rental(start_date=start_date, end_date=end_date, renter_id=renter_id, vehicle_id=vehicle_id
+                                , location_type=location_type, pickup_time=arg['pickup_time'],
+                                dropoff_time=arg['dropoff_time'])
+
+        rental_address = BaseAddress(lot_num=lot_num, street_name=street_name,
+                                         city=city, parish=parish)
         rental = Rental(start_date=start_date, end_date=end_date, renter_id=renter_id, vehicle_id=vehicle_id
-                        , location_type=location_type, pickup_time=pickup_time,
-                        dropoff_time=dropoff_time)
+                        , location_type=location_type)
+
         rental.address = rental_address
         rental.save()
         return CreateRental(
